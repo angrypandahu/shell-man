@@ -12,27 +12,30 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onView:myProjects",
-		"onCommand:extension.helloWorld",
-		"onCommand:myProjects.refresh"
+
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
-			},
-			{
-				"command": "myProjects.refresh",
+				"command": "shellManProjects.refresh",
 				"title": "刷新项目列表"
 			}
 		],
-		"views": {
-			"explorer": [
+		"viewsContainers": {
+			"activitybar": [
 				{
-					"id": "myProjects",
-					"name": "My Projects"
+					"id": "myProjectsContainer",
+					"title": "项目管理器",
+					"icon": "media/uv.svg"
+				}
+			]
+		},
+		"views": {
+			"myProjectsContainer": [
+				{
+					"id": "shellManProjects",
+					"name": "shell-man"
 				}
 			]
 		}
