@@ -48,6 +48,12 @@
 					"name": "Shell 命令",
 					"icon": "$(terminal-bash)",
 					"contextualTitle": "Shell 命令"
+				},
+				{
+					"id": "shellManFavorite",
+					"name": "Shell 收藏",
+					"icon": "$(star)",
+					"contextualTitle": "Shell 收藏"
 				}
 			]
 		},
@@ -67,7 +73,7 @@
 			"view/item/context": [
 				{
 					"command": "shellManProjects.execute",
-					"when": "view == shellManProjects && viewItem == command",
+					"when": "view == shellManProjects && (viewItem == command || viewItem == case)",
 					"group": "inline",
 					"icon": "$(play)"
 				}

@@ -4,9 +4,15 @@ import * as vscode from 'vscode';
 import { ShellToolProvider } from './providers/ShellTreeDataProvider';
 import { TreeNode } from './models/entity/TreeNode';
 import { CommandTreeItem } from './models/vo/CommandTreeItem';
+import { TreeNodeService } from './services/TreeNodeService';
+import { SHELL_MAN_FAVORITE_SAVE_KEY, SHELL_MAN_PROJECTS_SAVE_KEY } from './utils/Constants';
 
 // 初始化示例数据
-async function initializeSampleData(context: vscode.ExtensionContext) {
+async function initializeSampleData(context: vscode.ExtensionContext, key: string) {
+	const treeNodes = context.globalState.get(key);
+	if (treeNodes) {
+		return;
+	}
 	const sampleData: TreeNode[] = [
 		{
 			id: 1,
@@ -82,7 +88,7 @@ async function initializeSampleData(context: vscode.ExtensionContext) {
 			isLeaf: true,
 			sortOrder: 0,
 			parentId: 4,
-			nodeType: "command",
+			nodeType: "case",
 			shellCommand: {
 				command: "ls -la",
 				parentCommand: null,
@@ -95,7 +101,7 @@ async function initializeSampleData(context: vscode.ExtensionContext) {
 		}
 	];
 
-	await context.globalState.update('tree_nodes', sampleData);
+	await context.globalState.update(key, sampleData);
 }
 
 // this method is called when your extension is activated
@@ -106,31 +112,32 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(outputChannel);
 
 	// 初始化示例数据
-	await initializeSampleData(context);
+	await initializeSampleData(context, SHELL_MAN_PROJECTS_SAVE_KEY);
+	await initializeSampleData(context, SHELL_MAN_FAVORITE_SAVE_KEY);
 
 	// 初始化视图提供者
-	const provider = new ShellToolProvider(context, outputChannel);
-	vscode.window.registerTreeDataProvider('shellManProjects', provider);
+	const treeNodeService = new TreeNodeService(context, outputChannel);
+	const providerCommand = new ShellToolProvider(SHELL_MAN_PROJECTS_SAVE_KEY, treeNodeService);
+	const providerFavorite = new ShellToolProvider(SHELL_MAN_FAVORITE_SAVE_KEY, treeNodeService);
+	vscode.window.registerTreeDataProvider('shellManProjects', providerCommand);
+	vscode.window.registerTreeDataProvider('shellManFavorite', providerFavorite);
 
 	// 注册刷新命令
 	const disposable = vscode.commands.registerCommand('shellManProjects.refresh', () => {
-		provider.refresh();
+		providerCommand.refresh();
 	});
 
-
 	// 注册刷新命令
-	const commandExecute = 	vscode.commands.registerCommand('shellManProjects.execute', (item: CommandTreeItem) => {
-		provider.execute(item);
+	const commandExecute = vscode.commands.registerCommand('shellManProjects.execute', (item: CommandTreeItem) => {
+		treeNodeService.execute(item);
 	});
 	// 注册显示日志命令
 	const showLogsCommand = vscode.commands.registerCommand('shellManProjects.showLogs', () => {
 		outputChannel.show();
 	});
-
 	context.subscriptions.push(disposable, showLogsCommand, commandExecute);
 
-	// 立即加载数据
-	provider.refresh();
+
 }
 
 
