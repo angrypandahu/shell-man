@@ -8,6 +8,7 @@ export class CommandTreeItem extends vscode.TreeItem {
     public shellCommand?: ShellCommand;
 
     constructor(
+        public readonly id: string,
         public readonly label: string,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState,
         children: CommandTreeItem[] = [],
@@ -30,6 +31,6 @@ export class CommandTreeItem extends vscode.TreeItem {
         if (shellCommand) {
             this.shellCommand = shellCommand;
         }
+        this.id = id;
     }
-
 } 

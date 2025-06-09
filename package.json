@@ -12,30 +12,52 @@
 		"Other"
 	],
 	"activationEvents": [
-
+		"onView:shellManProjects"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
 				"command": "shellManProjects.refresh",
-				"title": "刷新项目列表"
+				"title": "刷新项目列表",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "shellManProjects.showLogs",
+				"title": "显示日志",
+				"icon": "$(output)"
 			}
 		],
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "myProjectsContainer",
-					"title": "项目管理器",
-					"icon": "media/uv.svg"
+					"id": "shellManContainer",
+					"title": "Shell 命令管理器",
+					"icon": "$(terminal-bash)"
 				}
 			]
 		},
 		"views": {
-			"myProjectsContainer": [
+			"shellManContainer": [
 				{
 					"id": "shellManProjects",
-					"name": "shell-man"
+					"name": "Shell 命令",
+					"icon": "$(terminal-bash)",
+					"contextualTitle": "Shell 命令"
+				}
+			]
+		},
+		"menus": {
+			"view/title": [
+				{
+					"command": "shellManProjects.refresh",
+					"when": "view == shellManProjects",
+					"group": "navigation"
+				},
+				{
+					"command": "shellManProjects.showLogs",
+					"when": "view == shellManProjects",
+					"group": "navigation"
 				}
 			]
 		}
