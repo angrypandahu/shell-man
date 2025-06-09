@@ -12,7 +12,6 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onView:shellManProjects"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -26,6 +25,11 @@
 				"command": "shellManProjects.showLogs",
 				"title": "显示日志",
 				"icon": "$(output)"
+			},
+			{
+				"command": "shellManProjects.execute",
+				"title": "执行命令",
+				"icon": "$(play)"
 			}
 		],
 		"viewsContainers": {
@@ -58,6 +62,14 @@
 					"command": "shellManProjects.showLogs",
 					"when": "view == shellManProjects",
 					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "shellManProjects.execute",
+					"when": "view == shellManProjects && viewItem == command",
+					"group": "inline",
+					"icon": "$(play)"
 				}
 			]
 		}

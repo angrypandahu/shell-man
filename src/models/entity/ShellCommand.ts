@@ -3,6 +3,6 @@ export class ShellCommand {
         public name: string,
         public command: string,
         public type :string,
-        public parentCommand: ShellCommand,
+        public parentCommand: ShellCommand | null,
     ) {}
 }

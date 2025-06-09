@@ -1,36 +1,21 @@
 import * as vscode from 'vscode';
 import { ShellCommand } from '../entity/ShellCommand';
+import { TreeNode } from '../entity/TreeNode';
 
 export class CommandTreeItem extends vscode.TreeItem {
     public parent: CommandTreeItem | null = null;
     public children: CommandTreeItem[] = [];
     public description?: string;
-    public shellCommand?: ShellCommand;
-
-    constructor(
-        public readonly id: string,
-        public readonly label: string,
-        public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-        children: CommandTreeItem[] = [],
-        public readonly iconPath?: vscode.ThemeIcon,
-        public readonly contextValue?: string,
-        description?: string,
-        shellCommand?: ShellCommand
-    ) {
-        super(label, collapsibleState);
-        this.children = children;
-        if (iconPath) {
-            this.iconPath = iconPath;
-        }
-        if (contextValue) {
-            this.contextValue = contextValue;
-        }
-        if (description) {
-            this.description = description;
-        }
-        if (shellCommand) {
-            this.shellCommand = shellCommand;
-        }
-        this.id = id;
+    public shellCommand?: ShellCommand | null;
+    constructor(node: TreeNode) {
+        super(node.name, vscode.TreeItemCollapsibleState.None);
+        this.id = node.id.toString();
+        this.label = node.name;
+        this.collapsibleState = !node.isLeaf ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None;
+        this.iconPath = node.icon ? new vscode.ThemeIcon(node.icon) : undefined;
+        this.contextValue = node.nodeType;
+        this.shellCommand = node.shellCommand;
     }
+
+
 } 

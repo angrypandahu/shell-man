@@ -1,21 +1,19 @@
 import * as vscode from 'vscode';
 import { CommandTreeItem } from '../models/vo/CommandTreeItem';
+import { TreeNode } from '../models/entity/TreeNode';
 
-interface TreeNode {
-    id: number;
-    name: string;
-    icon?: string;
-    hierarchy: string;
-    sort_order: number;
-    parent_id?: number;
-    tags?: string;
-    node_type: string;
-    command?: string;
-    created_at: string;
-    updated_at: string;
-}
+
 
 export class ShellToolProvider implements vscode.TreeDataProvider<CommandTreeItem> {
+    execute(node: CommandTreeItem) {
+        this.outputChannel.appendLine(`execute: ${node.label}, id: ${node.id}`);
+        if (node && node.shellCommand) {
+            const terminal = vscode.window.createTerminal(`命令: ${node.shellCommand.command}`);
+            terminal.show();
+            terminal.sendText(node.shellCommand.command);
+            this.refresh();
+        }
+    }
     private _onDidChangeTreeData: vscode.EventEmitter<CommandTreeItem | undefined | null | void> = new vscode.EventEmitter<CommandTreeItem | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<CommandTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
 
@@ -34,18 +32,18 @@ export class ShellToolProvider implements vscode.TreeDataProvider<CommandTreeIte
     async getChildren(element?: CommandTreeItem): Promise<CommandTreeItem[]> {
         const nodes = this._context.globalState.get<TreeNode[]>('tree_nodes', []);
         this.outputChannel.appendLine(`getChildren - all nodes: ${JSON.stringify(nodes, null, 2)}`);
-        
+
         if (element) {
             this.outputChannel.appendLine(`getChildren - parent element: ${element.label}, id: ${element.id}`);
             // 如果是文件夹，返回其子节点
-            const childNodes = nodes.filter(node => node.parent_id === parseInt(element.id))
-                .sort((a, b) => a.sort_order - b.sort_order);
+            const childNodes = nodes.filter(node => node.parentId === parseInt(element.id || ''))
+                .sort((a, b) => a.sortOrder - b.sortOrder);
             this.outputChannel.appendLine(`getChildren - child nodes: ${JSON.stringify(childNodes, null, 2)}`);
             return childNodes.map(node => this.createTreeItem(node));
         } else {
             // 返回根节点
-            const rootNodes = nodes.filter(node => !node.parent_id)
-                .sort((a, b) => a.sort_order - b.sort_order);
+            const rootNodes = nodes.filter(node => !node.parentId)
+                .sort((a, b) => a.sortOrder - b.sortOrder);
             this.outputChannel.appendLine(`getChildren - root nodes: ${JSON.stringify(rootNodes, null, 2)}`);
             return rootNodes.map(node => this.createTreeItem(node));
         }
@@ -53,40 +51,26 @@ export class ShellToolProvider implements vscode.TreeDataProvider<CommandTreeIte
 
     private createTreeItem(node: TreeNode): CommandTreeItem {
         this.outputChannel.appendLine(`createTreeItem: ${JSON.stringify(node, null, 2)}`);
-        const collapsibleState = node.node_type === 'folder' 
-            ? vscode.TreeItemCollapsibleState.Collapsed 
-            : vscode.TreeItemCollapsibleState.None;
-
-        const iconPath = node.icon 
-            ? new vscode.ThemeIcon(node.icon)
-            : undefined;
-
         return new CommandTreeItem(
-            node.id.toString(),
-            node.name,
-            collapsibleState,
-            [],
-            iconPath,
-            node.node_type,
-            node.command
+            node
         );
     }
 
     async saveNode(node: TreeNode): Promise<void> {
         const nodes = this._context.globalState.get<TreeNode[]>('tree_nodes', []);
         const existingNodeIndex = nodes.findIndex(n => n.id === node.id);
-        
+
         if (existingNodeIndex >= 0) {
             nodes[existingNodeIndex] = {
                 ...node,
-                updated_at: new Date().toISOString()
+                updatedAt: new Date().toISOString()
             };
         } else {
             nodes.push({
                 ...node,
                 id: nodes.length + 1,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
             });
         }
 

@@ -9,8 +9,11 @@ export class TreeNode {
         public hierarchy: string,
         public sortOrder: number,
         public parentId: number,
-        public command: ShellCommand,
+        public isLeaf = false,
+        public shellCommand: ShellCommand | null,
         public tags: Tag[],
         public nodeType: string,
+        public createdAt: string,
+        public updatedAt: string,
     ) {}    
 }
