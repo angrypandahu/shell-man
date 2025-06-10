@@ -5,7 +5,7 @@ import { ShellToolProvider } from './providers/ShellTreeDataProvider';
 import { TreeNode } from './models/entity/TreeNode';
 import { CommandTreeItem } from './models/vo/CommandTreeItem';
 import { TreeNodeService } from './services/TreeNodeService';
-import { SHELL_MAN_FAVORITE_SAVE_KEY, SHELL_MAN_PROJECTS_SAVE_KEY } from './utils/Constants';
+import { SHELL_MAN_FAVORITE_META, SHELL_MAN_COMMAND_META } from './utils/Constants';
 
 // 初始化示例数据
 async function initializeSampleData(context: vscode.ExtensionContext, key: string) {
@@ -112,19 +112,22 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(outputChannel);
 
 	// 初始化示例数据
-	await initializeSampleData(context, SHELL_MAN_PROJECTS_SAVE_KEY);
-	await initializeSampleData(context, SHELL_MAN_FAVORITE_SAVE_KEY);
+	await initializeSampleData(context, SHELL_MAN_COMMAND_META.SAVE_KEY);
+	await initializeSampleData(context, SHELL_MAN_FAVORITE_META.SAVE_KEY);
 
 	// 初始化视图提供者
 	const treeNodeService = new TreeNodeService(context, outputChannel);
-	const providerCommand = new ShellToolProvider(SHELL_MAN_PROJECTS_SAVE_KEY, treeNodeService);
-	const providerFavorite = new ShellToolProvider(SHELL_MAN_FAVORITE_SAVE_KEY, treeNodeService);
-	vscode.window.registerTreeDataProvider('shellManProjects', providerCommand);
-	vscode.window.registerTreeDataProvider('shellManFavorite', providerFavorite);
+	const providerCommand = new ShellToolProvider(SHELL_MAN_COMMAND_META, treeNodeService);
+	const providerFavorite = new ShellToolProvider(SHELL_MAN_FAVORITE_META, treeNodeService);
+	vscode.window.registerTreeDataProvider(SHELL_MAN_FAVORITE_META.VIEW_ID, providerCommand);
+	vscode.window.registerTreeDataProvider(SHELL_MAN_COMMAND_META.VIEW_ID, providerFavorite);
 
 	// 注册刷新命令
-	const disposable = vscode.commands.registerCommand('shellManProjects.refresh', () => {
+	const providerCommandRefresh = vscode.commands.registerCommand('shell_man_command.refresh', () => {
 		providerCommand.refresh();
+	});
+	const providerFavoriteRefresh = vscode.commands.registerCommand('shell_man_favorite.refresh', () => {
+		providerFavorite.refresh();
 	});
 
 	// 注册刷新命令
@@ -135,7 +138,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const showLogsCommand = vscode.commands.registerCommand('shellManProjects.showLogs', () => {
 		outputChannel.show();
 	});
-	context.subscriptions.push(disposable, showLogsCommand, commandExecute);
+	context.subscriptions.push(providerCommandRefresh, providerFavoriteRefresh, showLogsCommand, commandExecute);
 
 
 }

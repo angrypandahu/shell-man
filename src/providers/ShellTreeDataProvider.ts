@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { CommandTreeItem } from '../models/vo/CommandTreeItem';
 import { TreeNode } from '../models/entity/TreeNode';
 import { TreeNodeService } from '../services/TreeNodeService';
+import { ShellManMeta } from '../utils/Constants';
 
 
 
@@ -11,11 +12,11 @@ export class ShellToolProvider implements vscode.TreeDataProvider<CommandTreeIte
     readonly onDidChangeTreeData: vscode.Event<CommandTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
 
     constructor(
-        private saveKey: string,
+        private metaData: ShellManMeta,
         private treeNodeService: TreeNodeService
     ) {
         this.outputChannel = treeNodeService.outputChannel;
-        this.saveKey = saveKey;
+        this.metaData = metaData;
     }
 
     getTreeItem(element: CommandTreeItem): CommandTreeItem {
@@ -24,22 +25,22 @@ export class ShellToolProvider implements vscode.TreeDataProvider<CommandTreeIte
     }
 
     async getChildren(element?: CommandTreeItem): Promise<CommandTreeItem[]> {
-        return this.treeNodeService.getChildren(this.saveKey, element);
+        return this.treeNodeService.getChildren(this.metaData.SAVE_KEY, element);
     }
 
     async saveNode(node: TreeNode): Promise<void> {
-        await this.treeNodeService.saveNode(node, this.saveKey);
+        await this.treeNodeService.saveNode(node, this.metaData.SAVE_KEY);
         this._onDidChangeTreeData.fire();
     }
 
     async deleteNode(nodeId: number): Promise<void> {
-        await this.treeNodeService.deleteNode(nodeId, this.saveKey);
+        await this.treeNodeService.deleteNode(nodeId, this.metaData.SAVE_KEY);
         this._onDidChangeTreeData.fire();
     }
 
     async refresh() {
         this.outputChannel.appendLine('refresh called');
         this._onDidChangeTreeData.fire();
-        vscode.window.showInformationMessage('项目列表已刷新');
+        vscode.window.showInformationMessage(`${this.metaData.VIEW_NAME}已刷新`);
     }
 }

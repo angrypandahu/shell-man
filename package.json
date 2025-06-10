@@ -11,14 +11,18 @@
 	"categories": [
 		"Other"
 	],
-	"activationEvents": [
-	],
+	"activationEvents": [],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "shellManProjects.refresh",
-				"title": "刷新项目列表",
+				"command": "shell_man_command.refresh",
+				"title": "刷新命令列表",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "shell_man_favorite.refresh",
+				"title": "刷新收藏列表",
 				"icon": "$(refresh)"
 			},
 			{
@@ -44,13 +48,13 @@
 		"views": {
 			"shellManContainer": [
 				{
-					"id": "shellManProjects",
+					"id": "shell_man_command",
 					"name": "Shell 命令",
 					"icon": "$(terminal-bash)",
 					"contextualTitle": "Shell 命令"
 				},
 				{
-					"id": "shellManFavorite",
+					"id": "shell_man_favorite",
 					"name": "Shell 收藏",
 					"icon": "$(star)",
 					"contextualTitle": "Shell 收藏"
@@ -60,20 +64,25 @@
 		"menus": {
 			"view/title": [
 				{
-					"command": "shellManProjects.refresh",
-					"when": "view == shellManProjects",
+					"command": "shell_man_command.refresh",
+					"when": "view == shell_man_command",
+					"group": "navigation"
+				},
+				{
+					"command": "shell_man_favorite.refresh",
+					"when": "view == shell_man_favorite",
 					"group": "navigation"
 				},
 				{
 					"command": "shellManProjects.showLogs",
-					"when": "view == shellManProjects",
+					"when": "view == shell_man_command || view == shell_man_favorite",
 					"group": "navigation"
 				}
 			],
 			"view/item/context": [
 				{
 					"command": "shellManProjects.execute",
-					"when": "view == shellManProjects && (viewItem == command || viewItem == case)",
+					"when": "viewItem == command || viewItem == case",
 					"group": "inline",
 					"icon": "$(play)"
 				}
