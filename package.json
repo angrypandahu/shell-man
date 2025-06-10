@@ -26,12 +26,17 @@
 				"icon": "$(refresh)"
 			},
 			{
-				"command": "shellManProjects.showLogs",
+				"command": "shell_man_last_run.refresh",
+				"title": "刷新最近执行列表",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "shell_man_common.showLogs",
 				"title": "显示日志",
 				"icon": "$(output)"
 			},
 			{
-				"command": "shellManProjects.execute",
+				"command": "shell_man_common.execute",
 				"title": "执行命令",
 				"icon": "$(play)"
 			}
@@ -55,9 +60,16 @@
 				},
 				{
 					"id": "shell_man_favorite",
-					"name": "Shell 收藏",
+					"name": "我的收藏",
 					"icon": "$(star)",
-					"contextualTitle": "Shell 收藏"
+					"contextualTitle": "我的收藏"
+				}
+				,
+				{
+					"id": "shell_man_last_run",
+					"name": "最近执行",
+					"icon": "$(history)",
+					"contextualTitle": "最近执行"
 				}
 			]
 		},
@@ -74,14 +86,19 @@
 					"group": "navigation"
 				},
 				{
-					"command": "shellManProjects.showLogs",
+					"command": "shell_man_last_run.refresh",
+					"when": "view == shell_man_last_run",
+					"group": "navigation"
+				},
+				{
+					"command": "shell_man_common.showLogs",
 					"when": "view == shell_man_command || view == shell_man_favorite",
 					"group": "navigation"
 				}
 			],
 			"view/item/context": [
 				{
-					"command": "shellManProjects.execute",
+					"command": "shell_man_common.execute",
 					"when": "viewItem == command || viewItem == case",
 					"group": "inline",
 					"icon": "$(play)"

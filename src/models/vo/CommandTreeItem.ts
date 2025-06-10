@@ -9,7 +9,7 @@ export class CommandTreeItem extends vscode.TreeItem {
     public shellCommand?: ShellCommand | null;
     constructor(node: TreeNode) {
         super(node.name, vscode.TreeItemCollapsibleState.None);
-        this.id = node.id.toString();
+        this.id = node.uid;
         this.label = node.name;
         this.collapsibleState = !node.isLeaf ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None;
         this.iconPath = node.icon ? new vscode.ThemeIcon(node.icon) : undefined;

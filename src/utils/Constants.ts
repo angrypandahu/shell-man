@@ -12,6 +12,12 @@ export const SHELL_MAN_FAVORITE_META: ShellManMeta = {
     VIEW_ICON: '$(star)',
 };
 
+export const SHELL_MAN_LAST_RUN_META: ShellManMeta = {
+    SAVE_KEY: 'last_run_nodes',
+    VIEW_ID: 'shell_man_last_run',
+    VIEW_NAME: '最近执行',
+    VIEW_ICON: '$(history)',
+};
 
 export interface ShellManMeta {
     SAVE_KEY: string;

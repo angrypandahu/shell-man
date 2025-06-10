@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { CommandTreeItem } from '../models/vo/CommandTreeItem';
 import { TreeNode } from '../models/entity/TreeNode';
+import { SHELL_MAN_LAST_RUN_META } from '../utils/Constants';
 
 export class TreeNodeService {
     private terminal: vscode.Terminal | null = null;
@@ -15,14 +16,14 @@ export class TreeNodeService {
         if (element) {
             this.outputChannel.appendLine(`getChildren - parent element: ${element.label}, id: ${element.id}`);
             // 如果是文件夹，返回其子节点
-            const childNodes = nodes.filter(node => node.parentId === parseInt(element.id || ''))
+            const childNodes = nodes.filter(node => node.parentUid === element.id || '')
                 .sort((a, b) => a.sortOrder - b.sortOrder);
             this.outputChannel.appendLine(`getChildren - child nodes: ${JSON.stringify(childNodes, null, 2)}`);
             return childNodes.map(node => this.createTreeItem(node));
         } else {
             // 返回根节点
-            const rootNodes = nodes.filter(node => !node.parentId)
-                .sort((a, b) => a.sortOrder - b.sortOrder);
+            const rootNodes = nodes.filter(node => !node.parentUid)
+                .sort((a, b) => b.sortOrder - a.sortOrder);
             this.outputChannel.appendLine(`getChildren - root nodes: ${JSON.stringify(rootNodes, null, 2)}`);
             return rootNodes.map(node => this.createTreeItem(node));
         }
@@ -37,7 +38,7 @@ export class TreeNodeService {
 
     async saveNode(node: TreeNode, key: string): Promise<void> {
         const nodes = this._context.globalState.get<TreeNode[]>(key, []);
-        const existingNodeIndex = nodes.findIndex(n => n.id === node.id);
+        const existingNodeIndex = nodes.findIndex(n => n.uid === node.uid);
 
         if (existingNodeIndex >= 0) {
             nodes[existingNodeIndex] = {
@@ -47,7 +48,6 @@ export class TreeNodeService {
         } else {
             nodes.push({
                 ...node,
-                id: nodes.length + 1,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             });
@@ -55,9 +55,9 @@ export class TreeNodeService {
 
         await this._context.globalState.update(key, nodes);
     }
-    async deleteNode(nodeId: number, key: string): Promise<void> {
+    async deleteNode(nodeId: string, key: string): Promise<void> {
         const nodes = this._context.globalState.get<TreeNode[]>(key, []);
-        const updatedNodes = nodes.filter(node => node.id !== nodeId);
+        const updatedNodes = nodes.filter(node => node.uid !== nodeId);
         await this._context.globalState.update(key, updatedNodes);
     }
 
@@ -74,6 +74,11 @@ export class TreeNodeService {
         if (node && node.shellCommand) {
             const terminal = this.getOrCreateTerminal();
             terminal.sendText(node.shellCommand.command);
+            console.log('#####contextValue: ', node.contextValue);
+            const lastRunNode = TreeNode.fromCommandTreeItem(node);
+            this.saveNode(lastRunNode, SHELL_MAN_LAST_RUN_META.SAVE_KEY);
         }
     }
+
+    
 }
