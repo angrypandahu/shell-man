@@ -2,15 +2,22 @@ import * as vscode from 'vscode';
 import { CommandTreeItem } from '../models/vo/CommandTreeItem';
 import { TreeNode } from '../models/entity/TreeNode';
 import { SHELL_MAN_LAST_RUN_META } from '../utils/Constants';
+import { AddNodePanel } from '../webview/AddNodePanel';
 
 export class TreeNodeService {
     private terminal: vscode.Terminal | null = null;
-    constructor(private _context: vscode.ExtensionContext, public outputChannel: vscode.OutputChannel) {
-        this._context = _context;
-        this.outputChannel = outputChannel;
+
+    constructor(
+        private context: vscode.ExtensionContext,
+        public outputChannel: vscode.OutputChannel
+    ) {}
+
+    addFolder(item: CommandTreeItem) {
+        AddNodePanel.createOrShow(this.context.extensionUri, item);
     }
+
     async getChildren(key: string, element?: CommandTreeItem): Promise<CommandTreeItem[]> {
-        const nodes = this._context.globalState.get<TreeNode[]>(key, []);
+        const nodes = this.context.globalState.get<TreeNode[]>(key, []);
         this.outputChannel.appendLine(`getChildren - all nodes: ${JSON.stringify(nodes, null, 2)}`);
 
         if (element) {
@@ -37,7 +44,7 @@ export class TreeNodeService {
     }
 
     async saveNode(node: TreeNode, key: string): Promise<void> {
-        const nodes = this._context.globalState.get<TreeNode[]>(key, []);
+        const nodes = this.context.globalState.get<TreeNode[]>(key, []);
         const existingNodeIndex = nodes.findIndex(n => n.uid === node.uid);
 
         if (existingNodeIndex >= 0) {
@@ -53,12 +60,12 @@ export class TreeNodeService {
             });
         }
 
-        await this._context.globalState.update(key, nodes);
+        await this.context.globalState.update(key, nodes);
     }
     async deleteNode(nodeId: string, key: string): Promise<void> {
-        const nodes = this._context.globalState.get<TreeNode[]>(key, []);
+        const nodes = this.context.globalState.get<TreeNode[]>(key, []);
         const updatedNodes = nodes.filter(node => node.uid !== nodeId);
-        await this._context.globalState.update(key, updatedNodes);
+        await this.context.globalState.update(key, updatedNodes);
     }
 
     private getOrCreateTerminal() {
@@ -79,6 +86,5 @@ export class TreeNodeService {
             this.saveNode(lastRunNode, SHELL_MAN_LAST_RUN_META.SAVE_KEY);
         }
     }
-
-    
 }
+

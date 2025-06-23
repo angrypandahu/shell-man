@@ -12,7 +12,7 @@ export class ShellToolProvider implements vscode.TreeDataProvider<CommandTreeIte
     readonly onDidChangeTreeData: vscode.Event<CommandTreeItem | undefined | null | void> = this._onDidChangeTreeData.event;
 
     constructor(
-        private metaData: ShellManMeta,
+        public metaData: ShellManMeta,
         private treeNodeService: TreeNodeService
     ) {
         this.outputChannel = treeNodeService.outputChannel;

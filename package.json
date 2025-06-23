@@ -31,6 +31,15 @@
 				"icon": "$(refresh)"
 			},
 			{
+				"command": "shell_man_command.add",
+				"title": "新增",
+				"icon": "$(add)"
+			},
+			{
+				"command": "shell_man_common.submitAdd",
+				"title": "提交新增"
+			},
+			{
 				"command": "shell_man_common.showLogs",
 				"title": "显示日志",
 				"icon": "$(output)"
@@ -63,8 +72,7 @@
 					"name": "我的收藏",
 					"icon": "$(star)",
 					"contextualTitle": "我的收藏"
-				}
-				,
+				},
 				{
 					"id": "shell_man_last_run",
 					"name": "最近执行",
@@ -77,6 +85,11 @@
 			"view/title": [
 				{
 					"command": "shell_man_command.refresh",
+					"when": "view == shell_man_command",
+					"group": "navigation"
+				},
+				{
+					"command": "shell_man_common.submitAdd",
 					"when": "view == shell_man_command",
 					"group": "navigation"
 				},
@@ -102,6 +115,12 @@
 					"when": "viewItem == command || viewItem == case",
 					"group": "inline",
 					"icon": "$(play)"
+				},
+				{
+					"command": "shell_man_command.add",
+					"when": "viewItem == folder",
+					"group": "inline",
+					"icon": "$(add)"
 				}
 			]
 		}

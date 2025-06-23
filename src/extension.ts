@@ -173,7 +173,18 @@ export async function activate(context: vscode.ExtensionContext) {
 	const showLogsCommand = vscode.commands.registerCommand('shell_man_common.showLogs', () => {
 		outputChannel.show();
 	});
-	context.subscriptions.push(providerCommandRefresh, providerFavoriteRefresh, providerLastRunRefresh, showLogsCommand, commandExecute);
+	// 注册新增按钮
+	const addFolderCommand = vscode.commands.registerCommand(
+		'shell_man_command.add',
+		function(this: ShellToolProvider, item: CommandTreeItem) {
+			console.log('#####addFolderCommand: ', item);
+			console.log('#####this: ', this);
+			console.log('#####providerCommand: ', this.metaData.VIEW_NAME);
+			treeNodeService.addFolder(item);
+		},
+		providerCommand
+	);
+	context.subscriptions.push(providerCommandRefresh, providerFavoriteRefresh, providerLastRunRefresh, showLogsCommand, commandExecute, addFolderCommand);
 }
 
 
