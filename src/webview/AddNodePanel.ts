@@ -1,16 +1,21 @@
 import * as vscode from 'vscode';
 import { TreeNode } from '../models/entity/TreeNode';
 import { CommandTreeItem } from '../models/vo/CommandTreeItem';
+import { TreeNodeService } from '../services/TreeNodeService';
+import { ShellToolProvider } from '../providers/ShellTreeDataProvider';
 
 export class AddNodePanel {
     public static currentPanel: AddNodePanel | undefined;
     private readonly _panel: vscode.WebviewPanel;
-    private readonly _extensionUri: vscode.Uri;
     private _disposables: vscode.Disposable[] = [];
 
-    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, private parentItem?: CommandTreeItem) {
+    private constructor(
+        panel: vscode.WebviewPanel,
+        private treeNodeService: TreeNodeService,
+        private provider: ShellToolProvider,
+        private parentItem?: CommandTreeItem
+    ) {
         this._panel = panel;
-        this._extensionUri = extensionUri;
 
         this._panel.webview.html = this._getHtmlForWebview(this._panel.webview);
 
@@ -18,31 +23,34 @@ export class AddNodePanel {
 
         this._panel.webview.onDidReceiveMessage(
             async message => {
-                switch (message.command) {
+                console.log('#####message: ', message);
+                switch (message.func) {
                     case 'submit':
-                        { const node: TreeNode = {
-                            uid: Date.now().toString(),
-                            name: message.name,
-                            icon: message.type === 'folder' ? 'folder' : 'file',
-                            hierarchy: '',
-                            sortOrder: 0,
-                            nodeType: message.type,
-                            parentUid: this.parentItem?.id || '',
-                            shellCommand: message.type !== 'folder' ? {
-                                command: message.command || '',
-                                parentCommand: null,
+                        {
+                            const node: TreeNode = {
+                                uid: Date.now().toString(),
                                 name: message.name,
-                                type: message.type
-                            } : null,
-                            isLeaf: message.type !== 'folder',
-                            tags: [],
-                            createdAt: new Date().toISOString(),
-                            updatedAt: new Date().toISOString()
-                        };
-                        console.log('#####node: ', node);
-                        vscode.commands.executeCommand('shell_man_command.refresh');
-                        this._panel.dispose();
-                        break; }
+                                icon: message.type === 'folder' ? 'folder' : 'file',
+                                hierarchy: '',
+                                sortOrder: 0,
+                                nodeType: message.type,
+                                parentUid: this.parentItem?.id || '',
+                                shellCommand: message.type !== 'folder' ? {
+                                    command: message.command || '',
+                                    parentCommand: null,
+                                    name: message.name,
+                                    type: message.type
+                                } : null,
+                                isLeaf: message.type !== 'folder',
+                                tags: [],
+                                createdAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString()
+                            };
+                            await this.treeNodeService.saveNode(node, this.provider.metaData.SAVE_KEY);
+                            this.provider.refresh();
+                            this._panel.dispose();
+                            break;
+                        }
                 }
             },
             null,
@@ -52,7 +60,12 @@ export class AddNodePanel {
         console.log('webview js loaded');
     }
 
-    public static createOrShow(extensionUri: vscode.Uri, parentItem?: CommandTreeItem) {
+    public static createOrShow(
+        extensionUri: vscode.Uri,
+        treeNodeService: TreeNodeService,
+        provider: ShellToolProvider,
+        parentItem?: CommandTreeItem
+    ) {
         const column = vscode.window.activeTextEditor
             ? vscode.window.activeTextEditor.viewColumn
             : undefined;
@@ -72,7 +85,7 @@ export class AddNodePanel {
             }
         );
 
-        AddNodePanel.currentPanel = new AddNodePanel(panel, extensionUri, parentItem);
+        AddNodePanel.currentPanel = new AddNodePanel(panel, treeNodeService, provider, parentItem);
     }
 
     public dispose() {
@@ -166,11 +179,20 @@ export class AddNodePanel {
                 function submit() {
                     const name = document.getElementById('name').value;
                     const type = document.getElementById('type').value;
-                    console.log('submit called', { name, type  });
+                    const command = document.getElementById('command').value;
+                    if (!name) {
+                        alert('请输入名称');
+                        return;
+                    }
+                    if (type !== 'folder' && !command) {
+                        alert('请输入命令');
+                        return;
+                    }
                     vscode.postMessage({
-                        command: 'submit',
+                        func: 'submit',
                         name: name,
-                        type: type
+                        type: type,
+                        command: command
                     });
                 }
             </script>

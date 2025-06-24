@@ -3,6 +3,7 @@ import { CommandTreeItem } from '../models/vo/CommandTreeItem';
 import { TreeNode } from '../models/entity/TreeNode';
 import { TreeNodeService } from '../services/TreeNodeService';
 import { ShellManMeta } from '../utils/Constants';
+import { AddNodePanel } from '../webview/AddNodePanel';
 
 
 
@@ -42,5 +43,9 @@ export class ShellToolProvider implements vscode.TreeDataProvider<CommandTreeIte
         this.outputChannel.appendLine('refresh called');
         this._onDidChangeTreeData.fire();
         vscode.window.showInformationMessage(`${this.metaData.VIEW_NAME}已刷新`);
+    }
+
+    addFolder(item: CommandTreeItem) {
+        AddNodePanel.createOrShow(this.treeNodeService.context.extensionUri, this.treeNodeService, this, item);
     }
 }

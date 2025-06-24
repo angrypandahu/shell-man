@@ -11,6 +11,7 @@ import * as path from 'path';
 import * as os from 'os';
 
 // 初始化示例数据
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function initializeSampleData(context: vscode.ExtensionContext, key: string) {
 	try {
 		const shellmanDir = path.join(os.homedir(), '.shellman');
@@ -141,9 +142,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(outputChannel);
 
 	// 初始化示例数据
-	await initializeSampleData(context, SHELL_MAN_COMMAND_META.SAVE_KEY);
-	await initializeSampleData(context, SHELL_MAN_FAVORITE_META.SAVE_KEY);
-	await initializeSampleData(context, SHELL_MAN_LAST_RUN_META.SAVE_KEY);
+	// await initializeSampleData(context, SHELL_MAN_COMMAND_META.SAVE_KEY);
+	// await initializeSampleData(context, SHELL_MAN_FAVORITE_META.SAVE_KEY);
+	// await initializeSampleData(context, SHELL_MAN_LAST_RUN_META.SAVE_KEY);
 
 	// 初始化视图提供者
 	const treeNodeService = new TreeNodeService(context, outputChannel);
@@ -174,16 +175,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		outputChannel.show();
 	});
 	// 注册新增按钮
-	const addFolderCommand = vscode.commands.registerCommand(
-		'shell_man_command.add',
-		function(this: ShellToolProvider, item: CommandTreeItem) {
-			console.log('#####addFolderCommand: ', item);
-			console.log('#####this: ', this);
-			console.log('#####providerCommand: ', this.metaData.VIEW_NAME);
-			treeNodeService.addFolder(item);
-		},
-		providerCommand
-	);
+	const addFolderCommand = vscode.commands.registerCommand('shell_man_command.add', (item: CommandTreeItem) => {
+		providerCommand.addFolder(item);
+	});
 	context.subscriptions.push(providerCommandRefresh, providerFavoriteRefresh, providerLastRunRefresh, showLogsCommand, commandExecute, addFolderCommand);
 }
 
