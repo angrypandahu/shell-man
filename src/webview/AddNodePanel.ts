@@ -153,7 +153,7 @@ export class AddNodePanel {
 
             <script>
                 const vscode = acquireVsCodeApi();
-                console.log('webview js loaded');
+                console.log('$$$$$webview js loaded');
 
                 document.getElementById('submitBtn').addEventListener('click', submit);
 
@@ -166,23 +166,11 @@ export class AddNodePanel {
                 function submit() {
                     const name = document.getElementById('name').value;
                     const type = document.getElementById('type').value;
-                    const command = document.getElementById('command').value;
-
-                    console.log('submit called', { name, type, command });
-
-                    if (!name) {
-                        alert('请输入名称');
-                        return;
-                    }
-                    if (type !== 'folder' && !command) {
-                        alert('请输入命令');
-                        return;
-                    }
+                    console.log('submit called', { name, type  });
                     vscode.postMessage({
                         command: 'submit',
                         name: name,
-                        type: type,
-                        command: command
+                        type: type
                     });
                 }
             </script>
