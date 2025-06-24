@@ -2,7 +2,7 @@
 	"name": "shell-man",
 	"displayName": "shell-man",
 	"description": "manager shell scripts for VS Code",
-	"icon": "media/logo.png",
+	"icon": "logo.png",
 	"version": "0.0.1",
 	"publisher": "panda20160914",
 	"repository": "https://github.com/angrypandahu/shell-man",
