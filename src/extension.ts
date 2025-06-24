@@ -218,14 +218,14 @@ export async function activate(context: vscode.ExtensionContext) {
 			// 	label: '管理快捷键',
 			// 	description: '查看和管理用例的快捷键绑定'
 			// },
-			// {
-			// 	label: '导出配置',
-			// 	description: '导出当前所有配置到文件'
-			// },
-			// {
-			// 	label: '导入配置',
-			// 	description: '从文件导入配置'
-			// }
+			{
+				label: '导出配置',
+				description: '导出当前所有配置到文件'
+			},
+			{
+				label: '导入配置',
+				description: '从文件导入配置'
+			}
 		];
 
 		const selected = await vscode.window.showQuickPick(settings, {
@@ -242,6 +242,12 @@ export async function activate(context: vscode.ExtensionContext) {
 					break;
 				case '清空收藏夹':
 					providerFavorite.clear();
+					break;
+				case '导入配置':
+					providerCommand.importSettings();
+					break;
+				case '导出配置':
+					providerCommand.exportSettings();
 					break;
 
 			}

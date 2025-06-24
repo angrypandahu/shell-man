@@ -37,6 +37,25 @@ export class TreeNodeService {
             node
         );
     }
+    async saveNodes(nodeList: TreeNode[], key: string): Promise<void> {
+        const nodes = this.context.globalState.get<TreeNode[]>(key, []);
+        nodeList.forEach(node => {
+            const existingNodeIndex = nodes.findIndex(n => n.uid === node.uid);
+            if (existingNodeIndex >= 0) {
+                nodes[existingNodeIndex] = {
+                    ...node,
+                    updatedAt: new Date().toISOString()
+                };
+            } else {
+                nodes.push({
+                    ...node,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                });
+            }
+        });
+        await this.context.globalState.update(key, nodes);
+    }
 
     async saveNode(node: TreeNode, key: string): Promise<void> {
         const nodes = this.context.globalState.get<TreeNode[]>(key, []);
