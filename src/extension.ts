@@ -166,6 +166,17 @@ export async function activate(context: vscode.ExtensionContext) {
 		providerLastRun.refresh();
 	});
 
+	// 注册删除命令
+	const deleteCommand = vscode.commands.registerCommand('shell_man_command.delete', (item: CommandTreeItem) => {
+		providerCommand.deleteNode(item?.id || '');
+	});
+	const deleteFavoriteCommand = vscode.commands.registerCommand('shell_man_favorite.delete', (item: CommandTreeItem) => {
+		providerFavorite.deleteNode(item?.id || '');
+	});
+	const deleteLastRunCommand = vscode.commands.registerCommand('shell_man_last_run.delete', (item: CommandTreeItem) => {
+		providerLastRun.deleteNode(item?.id || '');
+	});
+
 	// 注册刷新命令
 	const commandExecute = vscode.commands.registerCommand('shell_man_common.execute', (item: CommandTreeItem) => {
 		treeNodeService.execute(item);
@@ -189,7 +200,11 @@ export async function activate(context: vscode.ExtensionContext) {
 		providerFavorite.saveNode(node);
 	});
 
-	context.subscriptions.push(providerCommandRefresh, providerFavoriteRefresh, providerLastRunRefresh, showLogsCommand, commandExecute, addFolderCommand, addFavoriteCommand);
+	context.subscriptions.push(
+		providerCommandRefresh, providerFavoriteRefresh, providerLastRunRefresh,
+		showLogsCommand, commandExecute, addFolderCommand, addFavoriteCommand,
+		deleteCommand, deleteFavoriteCommand, deleteLastRunCommand
+	);
 }
 
 

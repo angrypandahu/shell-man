@@ -2,6 +2,7 @@
 	"name": "shell-man",
 	"displayName": "shell-man",
 	"description": "manager shell scripts for VS Code",
+	"icon": "media/logo.png",
 	"version": "0.0.1",
 	"publisher": "panda20160914",
 	"repository": "https://github.com/angrypandahu/shell-man",
@@ -36,8 +37,19 @@
 				"icon": "$(add)"
 			},
 			{
-				"command": "shell_man_common.submitAdd",
-				"title": "提交新增"
+				"command": "shell_man_command.delete",
+				"title": "删除",
+				"icon": "$(trash)"
+			},
+			{
+				"command": "shell_man_favorite.delete",
+				"title": "删除收藏",
+				"icon": "$(trash)"
+			},
+			{
+				"command": "shell_man_last_run.delete",
+				"title": "删除最近执行",
+				"icon": "$(trash)"
 			},
 			{
 				"command": "shell_man_common.showLogs",
@@ -60,7 +72,7 @@
 				{
 					"id": "shellManContainer",
 					"title": "Shell 命令管理器",
-					"icon": "$(terminal-bash)"
+					"icon": "media/sm.svg"
 				}
 			]
 		},
@@ -94,7 +106,7 @@
 					"group": "navigation"
 				},
 				{
-					"command": "shell_man_common.submitAdd",
+					"command": "shell_man_command.add",
 					"when": "view == shell_man_command",
 					"group": "navigation"
 				},
@@ -123,9 +135,27 @@
 				},
 				{
 					"command": "shell_man_command.add",
-					"when": "viewItem == folder",
+					"when": "viewItem == folder || viewItem == command",
 					"group": "inline",
 					"icon": "$(add)"
+				},
+				{
+					"command": "shell_man_command.delete",
+					"when": "view == shell_man_command &&(viewItem == command || viewItem == case || viewItem == folder)",
+					"group": "inline",
+					"icon": "$(trash)"
+				},
+				{
+					"command": "shell_man_favorite.delete",
+					"when": "view == shell_man_favorite &&(viewItem == command || viewItem == case || viewItem == folder)",
+					"group": "inline",
+					"icon": "$(trash)"
+				},
+				{
+					"command": "shell_man_last_run.delete",
+					"when": "view == shell_man_last_run &&(viewItem == command || viewItem == case || viewItem == folder)",
+					"group": "inline",
+					"icon": "$(trash)"
 				},
 				{
 					"command": "shell_man_favorite.add",

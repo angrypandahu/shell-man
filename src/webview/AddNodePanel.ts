@@ -24,6 +24,7 @@ export class AddNodePanel {
         this._panel.webview.onDidReceiveMessage(
             async message => {
                 console.log('#####message: ', message);
+                console.log('#####parentItem', parentItem);
                 switch (message.func) {
                     case 'submit':
                         {

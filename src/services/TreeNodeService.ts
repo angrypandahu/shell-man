@@ -54,7 +54,7 @@ export class TreeNodeService {
                 updatedAt: new Date().toISOString()
             });
         }
-
+        console.log("####nodes=", nodes);
         await this.context.globalState.update(key, nodes);
     }
     async deleteNode(nodeId: string, key: string): Promise<void> {
