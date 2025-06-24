@@ -16,11 +16,11 @@ async function initializeSampleData(context: vscode.ExtensionContext, key: strin
 	try {
 		const shellmanDir = path.join(os.homedir(), '.shellman');
 		const dataFile = path.join(shellmanDir, 'shellman_data.json');
-		
+
 		if (fs.existsSync(dataFile)) {
 			const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
 			let nodes: TreeNode[] = [];
-			
+
 			switch (key) {
 				case SHELL_MAN_COMMAND_META.SAVE_KEY:
 					nodes = data.command_nodes || [];
@@ -178,7 +178,18 @@ export async function activate(context: vscode.ExtensionContext) {
 	const addFolderCommand = vscode.commands.registerCommand('shell_man_command.add', (item: CommandTreeItem) => {
 		providerCommand.addFolder(item);
 	});
-	context.subscriptions.push(providerCommandRefresh, providerFavoriteRefresh, providerLastRunRefresh, showLogsCommand, commandExecute, addFolderCommand);
+	// 注册收藏按钮
+	const addFavoriteCommand = vscode.commands.registerCommand('shell_man_favorite.add', (item: CommandTreeItem) => {
+		console.log('#####addFavoriteCommand: ', item);
+		const node: TreeNode = {
+			...item.node,
+			uid: Date.now().toString(),
+			parentUid: '',
+		};
+		providerFavorite.saveNode(node);
+	});
+
+	context.subscriptions.push(providerCommandRefresh, providerFavoriteRefresh, providerLastRunRefresh, showLogsCommand, commandExecute, addFolderCommand, addFavoriteCommand);
 }
 
 

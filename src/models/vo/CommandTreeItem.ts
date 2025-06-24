@@ -3,6 +3,7 @@ import { ShellCommand } from '../entity/ShellCommand';
 import { TreeNode } from '../entity/TreeNode';
 
 export class CommandTreeItem extends vscode.TreeItem {
+    public node: TreeNode;
     public parent: CommandTreeItem | null = null;
     public children: CommandTreeItem[] = [];
     public description?: string;
@@ -15,6 +16,7 @@ export class CommandTreeItem extends vscode.TreeItem {
         this.iconPath = node.icon ? new vscode.ThemeIcon(node.icon) : undefined;
         this.contextValue = node.nodeType;
         this.shellCommand = node.shellCommand;
+        this.node = node;
     }
 
 

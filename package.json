@@ -48,6 +48,11 @@
 				"command": "shell_man_common.execute",
 				"title": "执行命令",
 				"icon": "$(play)"
+			},
+			{
+				"command": "shell_man_favorite.add",
+				"title": "收藏",
+				"icon": "$(star)"
 			}
 		],
 		"viewsContainers": {
@@ -121,6 +126,12 @@
 					"when": "viewItem == folder",
 					"group": "inline",
 					"icon": "$(add)"
+				},
+				{
+					"command": "shell_man_favorite.add",
+					"when": "(view == shell_man_command || view == shell_man_last_run) && (viewItem == command || viewItem == case)",
+					"group": "inline",
+					"icon": "$(star)"
 				}
 			]
 		}
