@@ -17,6 +17,11 @@
 	"contributes": {
 		"commands": [
 			{
+				"command": "shell_man_common.settings",
+				"title": "配置",
+				"icon": "$(gear)"
+			},
+			{
 				"command": "shell_man_command.refresh",
 				"title": "刷新命令列表",
 				"icon": "$(refresh)"
@@ -100,6 +105,11 @@
 		},
 		"menus": {
 			"view/title": [
+				{
+					"command": "shell_man_common.settings",
+					"when": "view == shell_man_command",
+					"group": "navigation"
+				},
 				{
 					"command": "shell_man_command.refresh",
 					"when": "view == shell_man_command",

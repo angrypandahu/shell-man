@@ -142,7 +142,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(outputChannel);
 
 	// 初始化示例数据
-	// await initializeSampleData(context, SHELL_MAN_COMMAND_META.SAVE_KEY);
+	// await initializeSampleData(context, SHELL_MAN_COMMAND_META.SAVE_KEY);ø
 	// await initializeSampleData(context, SHELL_MAN_FAVORITE_META.SAVE_KEY);
 	// await initializeSampleData(context, SHELL_MAN_LAST_RUN_META.SAVE_KEY);
 
@@ -200,10 +200,59 @@ export async function activate(context: vscode.ExtensionContext) {
 		providerFavorite.saveNode(node);
 	});
 
+	const settings = vscode.commands.registerCommand('shell_man_common.settings', async () => {
+		const settings = [
+			{
+				label: '清空命令',
+				description: '清除所有命令'
+			},
+			{
+				label: '清空最近任务',
+				description: '清除所有最近执行的任务记录'
+			},
+			{
+				label: '清空收藏夹',
+				description: '清除所有收藏的用例'
+			},
+			// {
+			// 	label: '管理快捷键',
+			// 	description: '查看和管理用例的快捷键绑定'
+			// },
+			// {
+			// 	label: '导出配置',
+			// 	description: '导出当前所有配置到文件'
+			// },
+			// {
+			// 	label: '导入配置',
+			// 	description: '从文件导入配置'
+			// }
+		];
+
+		const selected = await vscode.window.showQuickPick(settings, {
+			placeHolder: '选择设置选项'
+		});
+
+		if (selected) {
+			switch (selected.label) {
+				case '清空命令':
+					providerCommand.clear();
+					break;
+				case '清空最近任务':
+					providerLastRun.clear();
+					break;
+				case '清空收藏夹':
+					providerFavorite.clear();
+					break;
+
+			}
+		}
+	});
+
 	context.subscriptions.push(
 		providerCommandRefresh, providerFavoriteRefresh, providerLastRunRefresh,
 		showLogsCommand, commandExecute, addFolderCommand, addFavoriteCommand,
-		deleteCommand, deleteFavoriteCommand, deleteLastRunCommand
+		deleteCommand, deleteFavoriteCommand, deleteLastRunCommand,
+		settings
 	);
 }
 

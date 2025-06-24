@@ -28,10 +28,24 @@ export class AddNodePanel {
                 switch (message.func) {
                     case 'submit':
                         {
+                            let icon = '';
+                            switch (message.type) {
+                                case 'folder':
+                                    icon = 'folder';
+                                    break;
+                                case 'command':
+                                    icon = 'file';
+                                    break;
+                                case 'case':
+                                    icon = 'symbol-event';
+                                    break;
+
+                            }
+
                             const node: TreeNode = {
                                 uid: Date.now().toString(),
                                 name: message.name,
-                                icon: message.type === 'folder' ? 'folder' : 'file',
+                                icon: icon,
                                 hierarchy: '',
                                 sortOrder: 0,
                                 nodeType: message.type,
@@ -42,7 +56,7 @@ export class AddNodePanel {
                                     name: message.name,
                                     type: message.type
                                 } : null,
-                                isLeaf: message.type !== 'folder',
+                                isLeaf: message.type == 'case',
                                 tags: [],
                                 createdAt: new Date().toISOString(),
                                 updatedAt: new Date().toISOString()

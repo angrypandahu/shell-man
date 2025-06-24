@@ -41,7 +41,6 @@ export class TreeNodeService {
     async saveNode(node: TreeNode, key: string): Promise<void> {
         const nodes = this.context.globalState.get<TreeNode[]>(key, []);
         const existingNodeIndex = nodes.findIndex(n => n.uid === node.uid);
-
         if (existingNodeIndex >= 0) {
             nodes[existingNodeIndex] = {
                 ...node,

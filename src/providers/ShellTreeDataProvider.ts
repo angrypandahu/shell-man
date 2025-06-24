@@ -38,6 +38,10 @@ export class ShellToolProvider implements vscode.TreeDataProvider<CommandTreeIte
         await this.treeNodeService.deleteNode(nodeId, this.metaData.SAVE_KEY);
         this._onDidChangeTreeData.fire();
     }
+    async clear() {
+        await this.treeNodeService.context.globalState.update(this.metaData.SAVE_KEY, []);
+        this._onDidChangeTreeData.fire();
+    }
 
     async refresh() {
         this.outputChannel.appendLine('refresh called');
